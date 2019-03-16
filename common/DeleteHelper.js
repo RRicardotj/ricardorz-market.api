@@ -36,7 +36,7 @@ module.exports.tryToDelete = async (objectId, tableName, transaction) => {
   } catch (error) {
     switch (error.name) {
       case 'SequelizeForeignKeyConstraintError':
-      { throw new ErrorLogic('El elemento esta en uso'); }
+      { throw new ErrorLogic('El elemento está en uso'); }
       default:
       { throw new ErrorLogic('No se pudo eliminar el elemento'); }
     }
