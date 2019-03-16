@@ -4,15 +4,10 @@ const sequelize = require('../common/connection');
 const TABLE_NAME = 'product_category';
 
 const fields = {
-  id: {
-    allowNull: true,
-    primaryKey: true,
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-  },
   product_id: {
     type: Sequelize.INTEGER,
     allowNull: false,
+    primaryKey: true,
     references: {
       model: 'product',
       key: 'product_id',
@@ -21,6 +16,7 @@ const fields = {
   department_id: {
     type: Sequelize.INTEGER,
     allowNull: false,
+    primaryKey: true,
     references: {
       model: 'department',
       key: 'department_id',

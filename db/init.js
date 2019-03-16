@@ -113,4 +113,8 @@ const init = async () => {
   await populateData();
 };
 
-init();
+init().then(() => (sequelize.close())).catch((err) => {
+  console.log('An error has occurred'); // eslint-disable-line
+  console.log(err); // eslint-disable-line
+  sequelize.close();
+});
