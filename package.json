@@ -1,0 +1,35 @@
+{
+  "name": "ecommerce-challenge.api",
+  "version": "1.0.0",
+  "description": "Full Stack Turing Challenge",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "lint": "eslint .",
+    "test": "./node_modules/mocha/bin/mocha"
+  },
+  "author": "Ricardo",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.3",
+    "body-parser": "^1.18.3",
+    "dotenv": "^7.0.0",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.5.0",
+    "mailgun-js": "^0.22.0",
+    "moment": "^2.24.0",
+    "mysql": "^2.16.0",
+    "nodemon": "^1.18.10",
+    "pug": "^2.0.3",
+    "randomstring": "^1.1.5",
+    "sequelize": "^5.1.0",
+    "sequelize-cli": "^5.4.0",
+    "validatorjs": "^3.15.1"
+  },
+  "devDependencies": {
+    "eslint": "^5.15.2",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.16.0"
+  }
+}
