@@ -1,16 +1,18 @@
 exports.attributeData = require('./attributeData');
 
+exports.attributeValueData = require('./attributeValueData');
+
 exports.categoryData = require('./categoryData');
 
 exports.deparmentData = require('./deparmentData');
 
 exports.productAttributeData = require('./productAttributeData');
 
-exports.productCategory = require('./productCategory');
+exports.productCategoryData = require('./productCategoryData');
 
 exports.productData = require('./productData');
 
-exports.shipping = require('./shipping');
+exports.shippingData = require('./shippingData');
 
 exports.shippingRegionData = require('./shippingRegionData');
 

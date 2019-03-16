@@ -5,6 +5,19 @@
 // import DB connection with sequelize
 const sequelize = require('../common/connection');
 
+// imports models
+const Deparment = require('../models/Deparment');
+const Category = require('../models/Category');
+const Product = require('../models/Product');
+const ProductAttribute = require('../models/ProductAttribute');
+const ProductCategory = require('../models/ProductCategory');
+const Attribute = require('../models/Attribute');
+const AttributeValue = require('../models/AttributeValue');
+const ShippingRegion = require('../models/ShippingRegion');
+const Shipping = require('../models/Shipping');
+const Tax = require('../models/Tax');
+
+// Create queries
 const {
   createAttributeValue,
   createAttributes,
@@ -24,7 +37,61 @@ const {
   createTax,
 } = require('./create_tables');
 
+// Population queries
+const {
+  deparmentData,
+  categoryData,
+  productData,
+  productCategoryData,
+  attributeData,
+  attributeValueData,
+  productAttributeData,
+  shippingRegionData,
+  shippingData,
+  taxData,
+} = require('./populateData');
+
+/**
+ * Function for data population
+ */
+const populateData = async () => {
+  // Check if tables has rows if it's not then popule data respectively
+  const deparmentHasData = await Deparment.hasData();
+  const categoryHasData = await Category.hasData();
+  const productHasData = await Product.hasData();
+  const productCategoryHasData = await ProductCategory.hasData();
+  const attributeHasData = await Attribute.hasData();
+  const attributeValueHasData = await AttributeValue.hasData();
+  const productAttributeHasData = await ProductAttribute.hasData();
+  const shippingRegionHasData = await ShippingRegion.hasData();
+  const shippingHasData = await Shipping.hasData();
+  const taxHasData = await Tax.hasData();
+
+  if (!deparmentHasData) { await sequelize.query(deparmentData); }
+
+  if (!categoryHasData) { await sequelize.query(categoryData); }
+
+  if (!productHasData) { await sequelize.query(productData); }
+
+  if (!productCategoryHasData) { await sequelize.query(productCategoryData); }
+
+  if (!attributeHasData) { await sequelize.query(attributeData); }
+
+  if (!attributeValueHasData) { await sequelize.query(attributeValueData); }
+
+  if (!productAttributeHasData) { await sequelize.query(productAttributeData); }
+
+  if (!shippingRegionHasData) { await sequelize.query(shippingRegionData); }
+
+  if (!shippingHasData) { await sequelize.query(shippingData); }
+
+  if (!taxHasData) { await sequelize.query(taxData); }
+
+  return undefined;
+};
+
 const init = async () => {
+  // RUN create tables queries
   await sequelize.query(createDeparments);
   await sequelize.query(createCategory);
   await sequelize.query(createProduct);
@@ -41,6 +108,9 @@ const init = async () => {
   await sequelize.query(createTax);
   await sequelize.query(createAudit);
   await sequelize.query(createReview);
+
+  // Run populate data function
+  await populateData();
 };
 
 init();
