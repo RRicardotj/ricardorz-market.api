@@ -6,7 +6,8 @@
   "scripts": {
     "start": "nodemon index.js",
     "lint": "eslint .",
-    "test": "./node_modules/mocha/bin/mocha"
+    "test": "./node_modules/mocha/bin/mocha",
+    "init-db": "node ./db/init.js"
   },
   "author": "Ricardo",
   "license": "MIT",
@@ -19,7 +20,7 @@
     "jsonwebtoken": "^8.5.0",
     "mailgun-js": "^0.22.0",
     "moment": "^2.24.0",
-    "mysql": "^2.16.0",
+    "mysql2": "^1.6.5",
     "nodemon": "^1.18.10",
     "pug": "^2.0.3",
     "randomstring": "^1.1.5",
