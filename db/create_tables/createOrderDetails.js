@@ -8,5 +8,7 @@ CREATE TABLE IF NOT EXISTS order_detail (
   quantity     INT           NOT NULL,
   unit_cost    DECIMAL(10,2) NOT NULL,
   PRIMARY KEY  (item_id),
+  FOREIGN KEY(order_id) REFERENCES orders(order_id),
+  FOREIGN KEY(product_id) REFERENCES product(product_id),
   KEY idx_order_detail_order_id (order_id)
 )`;

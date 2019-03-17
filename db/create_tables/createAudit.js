@@ -6,5 +6,6 @@ CREATE TABLE IF NOT EXISTS audit (
   message        TEXT     NOT NULL,
   code           INT      NOT NULL,
   PRIMARY KEY (audit_id),
+  FOREIGN KEY(order_id) REFERENCES orders(order_id),
   KEY idx_audit_order_id (order_id)
 )`;

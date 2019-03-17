@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS category (
   name          VARCHAR(100)   NOT NULL,
   description   VARCHAR(1000),
   PRIMARY KEY (category_id),
+  FOREIGN KEY(department_id) REFERENCES department(department_id),
   KEY idx_category_department_id (department_id)
 )`;

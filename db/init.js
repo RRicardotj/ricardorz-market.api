@@ -35,6 +35,7 @@ const {
   createShippingRegion,
   createShoppingCart,
   createTax,
+  createCart,
 } = require('./create_tables');
 
 // Population queries
@@ -99,13 +100,14 @@ const init = async () => {
   await sequelize.query(createAttributes);
   await sequelize.query(createAttributeValue);
   await sequelize.query(createProductAttribute);
-  await sequelize.query(createShoppingCart);
-  await sequelize.query(createOrders);
-  await sequelize.query(createOrderDetails);
   await sequelize.query(createShippingRegion);
   await sequelize.query(createCustomer);
   await sequelize.query(createShipping);
+  await sequelize.query(createCart);
+  await sequelize.query(createShoppingCart);
   await sequelize.query(createTax);
+  await sequelize.query(createOrders);
+  await sequelize.query(createOrderDetails);
   await sequelize.query(createAudit);
   await sequelize.query(createReview);
 

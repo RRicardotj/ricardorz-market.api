@@ -14,5 +14,8 @@ CREATE TABLE IF NOT EXISTS orders (
   PRIMARY KEY  (order_id),
   KEY idx_orders_customer_id (customer_id),
   KEY idx_orders_shipping_id (shipping_id),
+  FOREIGN KEY(customer_id) REFERENCES customer(customer_id),
+  FOREIGN KEY(shipping_id) REFERENCES shipping(shipping_id),
+  FOREIGN KEY(tax_id) REFERENCES tax(tax_id),
   KEY idx_orders_tax_id (tax_id)
 )`;

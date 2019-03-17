@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS shipping (
   shipping_cost      NUMERIC(10, 2) NOT NULL,
   shipping_region_id INT            NOT NULL,
   PRIMARY KEY (shipping_id),
+  FOREIGN KEY(shipping_region_id) REFERENCES shipping_region(shipping_region_id),
   KEY idx_shipping_shipping_region_id (shipping_region_id)
 )`;

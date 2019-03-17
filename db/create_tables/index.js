@@ -4,6 +4,8 @@ exports.createAttributeValue = require('./createAttributeValue');
 
 exports.createAudit = require('./createAudit');
 
+exports.createCart = require('./createCart');
+
 exports.createCategory = require('./createCategory');
 
 exports.createCustomer = require('./createCustomer');

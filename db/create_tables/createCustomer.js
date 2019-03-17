@@ -17,5 +17,6 @@ CREATE TABLE IF NOT EXISTS customer (
   mob_phone          varchar(100),
   PRIMARY KEY  (customer_id),
   UNIQUE KEY idx_customer_email (email),
+  FOREIGN KEY(shipping_region_id) REFERENCES shipping_region(shipping_region_id),
   KEY idx_customer_shipping_region_id (shipping_region_id)
 )`;
