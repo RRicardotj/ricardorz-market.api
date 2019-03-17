@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 
 const jwtAuth = (req, res, next) => {
-  if (req.path === '/' || req.path === '/auth/signin') {
+  if (req.path === '/' || req.path === '/auth/signin' || req.path.substring(0, 14) === '/product_image') {
     return next();
   }
 
@@ -23,30 +23,7 @@ const jwtAuth = (req, res, next) => {
         return res.error('TOKEN_INVALID', 403, req.path);
       }
 
-      /*
-      if (decoded.type === 'admin') {
-        const instance = await User
-          .findOne({ where: { id: decoded.user }, attributes: ['isEnabled', 'name', 'language'] })
-          .catch(res.handleReject.bind(res));
-        if (instance.isEnabled) {
-          req.userId = decoded.user;
-          req.sessionId = decoded.session;
-          req.userType = decoded.type;
-          req.userName = instance.name;
-          req.userLanguage = instance.language;
-          await Session
-            .update({ updatedAt: moment.tz(new Date(), process.env.TZ).format('YYYY-MM-DD HH:mm:ss') }, { where: { id: req.sessionId } });
-          return next();
-        }
-
-        return res.error('Usuario desactivado', 403, req.path);
-      }
-
-      if (decoded.type !== 'admin') {
-        return res.error('Usuario ivalido', 403, req.path);
-      } */
-
-      // return res.error('Usuario ivalido', 403, req.path);
+      console.log(decoded);
       return next();
     },
   );
