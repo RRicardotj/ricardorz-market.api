@@ -5,7 +5,10 @@ const jwt = require('jsonwebtoken');
 
 
 const jwtAuth = (req, res, next) => {
-  if (req.path === '/' || req.path === '/auth/signin' || req.path.substring(0, 14) === '/product_image') {
+  if (req.path === '/'
+  || req.path === '/customer/signin'
+  || req.path.substring(0, 14) === '/product_image'
+  || req.path === '/customer/check') {
     return next();
   }
 
