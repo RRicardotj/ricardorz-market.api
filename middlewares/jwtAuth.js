@@ -8,7 +8,8 @@ const jwtAuth = (req, res, next) => {
   if (req.path === '/'
   || req.path === '/customer/signin'
   || req.path.substring(0, 14) === '/product_image'
-  || req.path === '/customer/check') {
+  || req.path === '/customer/check'
+  || req.path.substring(0, 11) === '/department') {
     return next();
   }
 

@@ -4,19 +4,22 @@ const sequelize = require('../common/connection');
 const TABLE_NAME = 'department';
 
 const fields = {
-  department_id: {
+  departmentId: {
     allowNull: true,
     primaryKey: true,
     type: Sequelize.INTEGER,
     autoIncrement: true,
+    field: 'department_id',
   },
   name: {
     allowNull: false,
     type: Sequelize.STRING(100),
+    field: 'name',
   },
   description: {
     allowNull: false,
     type: Sequelize.STRING(1000),
+    field: 'description',
   },
 };
 

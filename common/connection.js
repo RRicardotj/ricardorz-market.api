@@ -6,7 +6,7 @@ const cn = new Sequelize(configDb.database, configDb.username, configDb.password
   host: configDb.host,
   dialect: configDb.dialect,
   timezone: configDb.timezone,
-  operatorsAliases: false,
+  // operatorsAliases: false,
 });
 
 cn.getValue = (table, id, field) => new Promise((resolve, reject) => {

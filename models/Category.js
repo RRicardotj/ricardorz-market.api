@@ -4,27 +4,31 @@ const sequelize = require('../common/connection');
 const TABLE_NAME = 'category';
 
 const fields = {
-  category_id: {
+  categoryId: {
     allowNull: true,
     primaryKey: true,
     type: Sequelize.INTEGER,
     autoIncrement: true,
+    field: 'category_id',
   },
-  department_id: {
+  departmentId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'department',
       key: 'department_id',
     },
+    field: 'department_id',
   },
   name: {
     allowNull: false,
     type: Sequelize.STRING(100),
+    field: 'name',
   },
   description: {
     allowNull: false,
     type: Sequelize.STRING(1000),
+    field: 'description',
   },
 };
 
