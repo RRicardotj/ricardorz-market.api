@@ -1,5 +1,5 @@
 const Handler = require('../Handler');
-const Department = require('../../models/Deparment');
+const Department = require('../../models/Department');
 const Category = require('../../models/Category');
 
 class DepartmentController extends Handler {
@@ -10,7 +10,6 @@ class DepartmentController extends Handler {
   }
 
   async getAllDeparmentsWithCategories() {
-    this.model.hasMany(Category, { as: 'categories', foreignKey: 'department_id' });
     const deparments = await this.model.findAll({
       include: [{ model: Category, as: 'categories' }],
     });

@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../common/connection');
+const Category = require('./Category');
 
 const TABLE_NAME = 'department';
 
@@ -32,5 +33,15 @@ model.hasData = () => sequelize
       type: sequelize.QueryTypes.SELECT,
     },
   ).then(result => result[0].count > 0);
+
+model.countDepartment = () => sequelize
+  .query(
+    'SELECT COUNT(*) count FROM department',
+    {
+      type: sequelize.QueryTypes.SELECT,
+    },
+  ).then(result => result[0].count);
+
+model.hasMany(Category, { as: 'categories', foreignKey: 'department_id' });
 
 module.exports = model;
