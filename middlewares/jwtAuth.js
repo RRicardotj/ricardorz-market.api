@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken');
 
 
 const jwtAuth = (req, res, next) => {
-  if (req.path.substring(0, 6) !== '/admin') {
+  if (req.path.substring(0, 6) !== '/admin' && req.path.substring(0, 5) !== '/user') {
     return next();
   }
 

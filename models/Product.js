@@ -60,9 +60,10 @@ model.hasData = () => sequelize
     },
   ).then(result => result[0].count > 0);
 
-model.productsForMainScene = async (domain) => {
+model.productsForMainScene = async () => {
   const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
   const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
+  const domain = `"${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/"`;
 
   const productOrderedAtMonth = await sequelize
     .query(
@@ -72,7 +73,8 @@ model.productsForMainScene = async (domain) => {
       FROM orders ord
       LEFT JOIN order_detail ordD ON ordD.order_id = ord.order_id
       LEFT JOIN product prod ON prod.product_id = ordD.product_id
-      WHERE prod.display > 0 AND ord.created_on BETWEEN :startOfMonth AND :endOfMonth`,
+      WHERE prod.display > 0 AND ord.created_on BETWEEN :startOfMonth AND :endOfMonth
+      LIMIT 9`,
       {
         type: sequelize.QueryTypes.SELECT,
         replacements: { startOfMonth, endOfMonth },
