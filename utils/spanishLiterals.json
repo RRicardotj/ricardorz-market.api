@@ -7,5 +7,6 @@
   "NOT_MODEL": "Debe especificar una entidad",
   "USER_DISABLED": "Usuario deshabilitado",
   "CREDENTIALS_IVALID": "Credenciales inválidas",
-  "PASSWORD_CHANGED": "La contraseña ha sido cambiada"
+  "PASSWORD_CHANGED": "La contraseña ha sido cambiada",
+  "PAGE_MUST_BE_A_NUMBER": "Page debe ser un número"
 }

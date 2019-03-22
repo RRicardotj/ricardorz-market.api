@@ -7,5 +7,6 @@
   "NOT_MODEL": "Must specify an entity",
   "USER_DISABLED": "User is not enabled",
   "CREDENTIALS_IVALID": "Invalid credentials",
-  "PASSWORD_CHANGED": "Password has been changed"
+  "PASSWORD_CHANGED": "Password has been changed",
+  "PAGE_MUST_BE_A_NUMBER": "Page must be a number"
 }

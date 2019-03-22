@@ -14,6 +14,21 @@ const getForMain = async (req, res) => {
   return res.json(products);
 };
 
+const search = async (req, res) => {
+  try {
+    const { name, page } = req.query;
+    const productController = new ProductController();
+
+    const products = await productController.getProductsByName(name, page);
+
+    return res.json(products);
+  } catch (error) {
+    throw error;
+  }
+};
+
 router.get('/main', withCatchAsync(getForMain));
+
+router.get('/', withCatchAsync(search));
 
 module.exports = router;

@@ -6,6 +6,7 @@ const sequelize = require('../common/connection');
 // const Order = require('./Order');
 
 const TABLE_NAME = 'product';
+const domain = `"${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/"`;
 
 const fields = {
   product_id: {
@@ -63,7 +64,6 @@ model.hasData = () => sequelize
 model.productsForMainScene = async () => {
   const startOfMonth = moment().startOf('month').format('YYYY-MM-DD');
   const endOfMonth = moment().endOf('month').format('YYYY-MM-DD');
-  const domain = `"${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/"`;
 
   const productOrderedAtMonth = await sequelize
     .query(
@@ -93,6 +93,7 @@ model.productsForMainScene = async () => {
       CONCAT(${domain}, '', prod.image) image, CONCAT(${domain}, '', prod.image_2) image_2,
       CONCAT(${domain}, '', prod.thumbnail) thumbnail
       FROM product prod
+      WHERE prod.display > 0
       ORDER BY RAND()
       LIMIT ${diff}`,
       {
@@ -103,6 +104,34 @@ model.productsForMainScene = async () => {
   const productsToReturn = [...productOrderedAtMonth, ...products];
 
   return productsToReturn;
+};
+
+const foundRows = () => sequelize
+  .query('SELECT FOUND_ROWS() total', { type: sequelize.QueryTypes.SELECT });
+
+model.searchByName = (name, page) => {
+  const offset = (page - 1) * 10;
+  return sequelize
+    .query(
+      `SELECT SQL_CALC_FOUND_ROWS prod.product_id, prod.name, prod.description, prod.price, prod.discounted_price,
+      CONCAT(${domain}, '', prod.image) image, CONCAT(${domain}, '', prod.image_2) image_2,
+      CONCAT(${domain}, '', prod.thumbnail) thumbnail
+      FROM product prod
+      WHERE ${name ? `(prod.name LIKE '%${name}%' OR prod.description LIKE '%${name}%')` : ''}
+      LIMIT 10 OFFSET :offset`,
+      {
+        type: sequelize.QueryTypes.SELECT,
+        replacements: { name, offset },
+      },
+    ).then(async (rows) => {
+      const total = await foundRows();
+      const elements = total[0].total;
+      let totalPages = Math.ceil(elements / 10);
+
+      totalPages = (totalPages === 0 ? 1 : totalPages);
+
+      return { rows, page, totalPages };
+    });
 };
 
 module.exports = model;
