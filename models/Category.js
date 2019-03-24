@@ -64,7 +64,13 @@ model.getAllProductsById = (id, page) => {
       totalPages = (totalPages === 0 ? 1 : totalPages);
 
       return {
-        rows, page: Number(page), totalPages, total: elements,
+        rows,
+        page: Number(page),
+        totalPages,
+        total: elements,
+        categoryId: id,
+        categoryName: rows[0].categoryName,
+        departmentName: rows[0].departmentName,
       };
     });
 };
