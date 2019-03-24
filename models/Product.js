@@ -9,11 +9,12 @@ const TABLE_NAME = 'product';
 const domain = `"${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/"`;
 
 const fields = {
-  product_id: {
+  productId: {
     allowNull: true,
     primaryKey: true,
     type: Sequelize.INTEGER,
     autoIncrement: true,
+    field: 'product_id',
   },
   name: {
     allowNull: false,
@@ -27,18 +28,20 @@ const fields = {
     allowNull: false,
     type: Sequelize.DECIMAL(10, 2),
   },
-  discounted_price: {
+  discountedPrice: {
     allowNull: false,
     type: Sequelize.DECIMAL(10, 2),
     defaultValue: '0.00',
+    field: 'discounted_price',
   },
   image: {
     allowNull: true,
     type: Sequelize.STRING(150),
   },
-  image_2: {
+  image2: {
     allowNull: true,
     type: Sequelize.STRING(150),
+    field: 'image_2',
   },
   thumbnail: {
     allowNull: true,
@@ -67,8 +70,8 @@ model.productsForMainScene = async () => {
 
   const productOrderedAtMonth = await sequelize
     .query(
-      `SELECT prod.product_id, prod.name, prod.description, prod.price, prod.discounted_price,
-      CONCAT(${domain}, '', prod.image) image, CONCAT(${domain}, '', prod.image_2) image_2,
+      `SELECT prod.product_id productId, prod.name, prod.description, prod.price, prod.discounted_price discountedPrice,
+      CONCAT(${domain}, '', prod.image) image, CONCAT(${domain}, '', prod.image_2) image2,
       CONCAT(${domain}, '', prod.thumbnail) thumbnail
       FROM orders ord
       LEFT JOIN order_detail ordD ON ordD.order_id = ord.order_id
@@ -89,8 +92,8 @@ model.productsForMainScene = async () => {
 
   const products = await sequelize
     .query(
-      `SELECT prod.product_id, prod.name, prod.description, prod.price, prod.discounted_price,
-      CONCAT(${domain}, '', prod.image) image, CONCAT(${domain}, '', prod.image_2) image_2,
+      `SELECT prod.product_id productId, prod.name, prod.description, prod.price, prod.discounted_price discountedPrice,
+      CONCAT(${domain}, '', prod.image) image, CONCAT(${domain}, '', prod.image_2) image2,
       CONCAT(${domain}, '', prod.thumbnail) thumbnail
       FROM product prod
       WHERE prod.display > 0
@@ -113,11 +116,11 @@ model.searchByName = (name, page) => {
   const offset = (page - 1) * 10;
   return sequelize
     .query(
-      `SELECT SQL_CALC_FOUND_ROWS prod.product_id, prod.name, prod.description, prod.price, prod.discounted_price,
-      CONCAT(${domain}, '', prod.image) image, CONCAT(${domain}, '', prod.image_2) image_2,
+      `SELECT SQL_CALC_FOUND_ROWS prod.product_id productId, prod.name, prod.description, prod.price, prod.discounted_price discountedPrice,
+      CONCAT(${domain}, '', prod.image) image, CONCAT(${domain}, '', prod.image_2) image2,
       CONCAT(${domain}, '', prod.thumbnail) thumbnail
       FROM product prod
-      WHERE ${name ? `(prod.name LIKE '%${name}%' OR prod.description LIKE '%${name}%')` : ''}
+      ${name ? `WHERE (prod.name COLLATE UTF8_GENERAL_CI LIKE '%${name}%' OR prod.description COLLATE UTF8_GENERAL_CI LIKE '%${name}%')` : ''}
       LIMIT 10 OFFSET :offset`,
       {
         type: sequelize.QueryTypes.SELECT,
@@ -130,7 +133,9 @@ model.searchByName = (name, page) => {
 
       totalPages = (totalPages === 0 ? 1 : totalPages);
 
-      return { rows, page, totalPages };
+      return {
+        rows, page: Number(page), totalPages, total: elements,
+      };
     });
 };
 

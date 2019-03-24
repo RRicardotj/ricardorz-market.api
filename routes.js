@@ -6,6 +6,7 @@ router.use('/product_image', express.static(`${__dirname}/product_images`));
 
 router.use('/banners_image', express.static(`${__dirname}/banners`));
 
+router.use('/category', require('./controllers/CategoryController'));
 router.use('/customer', require('./controllers/CustomerController'));
 router.use('/department', require('./controllers/DeparmentController'));
 router.use('/product', require('./controllers/ProductController'));
