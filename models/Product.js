@@ -116,11 +116,18 @@ model.searchByName = (name, page) => {
   const offset = (page - 1) * 10;
   return sequelize
     .query(
-      `SELECT SQL_CALC_FOUND_ROWS prod.product_id productId, prod.name, prod.description, prod.price, prod.discounted_price discountedPrice,
+      `SELECT DISTINCT SQL_CALC_FOUND_ROWS prod.product_id productId, prod.name, prod.description, prod.price, prod.discounted_price discountedPrice,
       CONCAT(${domain}, '', prod.image) image, CONCAT(${domain}, '', prod.image_2) image2,
       CONCAT(${domain}, '', prod.thumbnail) thumbnail
       FROM product prod
-      ${name ? `WHERE (prod.name COLLATE UTF8_GENERAL_CI LIKE '%${name}%' OR prod.description COLLATE UTF8_GENERAL_CI LIKE '%${name}%')` : ''}
+      ${name ? `
+        LEFT JOIN product_category pc ON pc.product_id = prod.product_id
+        LEFT JOIN category cat ON cat.category_id = pc.category_id` : ''}
+      ${name ? `
+      WHERE
+        prod.name COLLATE UTF8_GENERAL_CI LIKE '%${name}%' OR prod.description COLLATE UTF8_GENERAL_CI LIKE '%${name}%'
+        OR cat.name COLLATE UTF8_GENERAL_CI LIKE '%${name}%' OR cat.description COLLATE UTF8_GENERAL_CI LIKE '%${name}%'
+      ` : ''}
       LIMIT 10 OFFSET :offset`,
       {
         type: sequelize.QueryTypes.SELECT,

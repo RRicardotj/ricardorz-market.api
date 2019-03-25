@@ -15,7 +15,7 @@ express.request.only = function only() {
 
 express.response.error = function handleError(error, status = 403, path) {
   // Change response on case of check token path
-  if (path === '/auth/check') {
+  if (path === '/customer/check') {
     return this.json({ isValid: false });
   }
   return this.status(status).json({ error });
@@ -45,7 +45,7 @@ express.response.handleReject = function handleReject(err) {
     if (err.code) {
       switch (err.code) {
         case LITERALS.NOT_MODEL:
-          return this.error('Ocurrió un error, revise los controladores', 500);
+          return this.error('An error occurred at backend server', 500);
         default:
           return this.error(err.message);
       }
