@@ -57,9 +57,12 @@ class CartController extends Handler {
   async addProduct({
     productId, data, cartId, customerId,
   }) {
+    console.log(productId, data, cartId, customerId);
     if (!data) {
       throw new this.CustomError(this.getMessage(this.LITERALS.SHOPPING_CART_DATA_NEEDIT), 403);
     }
+
+    data.attributes = data.attributes ? JSON.stringify(data.attributes) : '{}';
 
     if (!productId) {
       throw new this.CustomError(this.getMessage(this.LITERALS.PRODUCT_ID_NEEDIT), 403);
@@ -82,7 +85,7 @@ class CartController extends Handler {
       });
 
       if (shoppingCart) {
-        shoppingCart.update(data);
+        shoppingCart = await shoppingCart.update(data);
       } else {
         await ShoppingCart.create({
           ...data, productId, cartId: cart.cartId, addedOn: new Date(),
@@ -127,7 +130,7 @@ class CartController extends Handler {
         });
 
         if (shoppingCart) {
-          shoppingCart.update(data);
+          shoppingCart = await shoppingCart.update(data);
         } else {
           await ShoppingCart.create({
             ...data, productId, cartId: cart.cartId, addedOn: new Date(),
