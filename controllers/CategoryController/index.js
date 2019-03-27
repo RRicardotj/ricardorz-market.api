@@ -6,11 +6,15 @@ const withCatchAsync = require('../../common/catchAsyncErrors');
 const CategoryController = require('./CategoryController');
 
 const getAllProducts = async (req, res) => {
-  const categoryController = new CategoryController();
+  try {
+    const categoryController = new CategoryController();
 
-  const products = await categoryController.getAllProductsById(req.params.id, req.query.page);
+    const products = await categoryController.getAllProductsById(req.params.id, req.query.page);
 
-  return res.json(products);
+    return res.json(products);
+  } catch (error) {
+    throw error;
+  }
 };
 
 router.get('/:id(\\d+)/products', withCatchAsync(getAllProducts));

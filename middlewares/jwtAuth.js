@@ -5,11 +5,25 @@ const jwt = require('jsonwebtoken');
 
 
 const jwtAuth = (req, res, next) => {
+  let token = req.headers.authorization || req.query.token;
   if (req.path.substring(0, 6) !== '/admin' && req.path.substring(0, 5) !== '/user') {
+    if (token) {
+      token = token.split(' ');
+
+      jwt.verify(
+        (token.length > 1 ? token[1] : token[0]),
+        process.env.KEY_APP, async (err, decoded) => {
+          if (!err) {
+            req.customerId = decoded.customerId;
+            req.customerLanguage = decoded.customerId;
+          }
+          return next();
+        },
+      );
+    }
+
     return next();
   }
-
-  let token = req.headers.authorization || req.query.token;
 
   if (!token) { return res.error('TOKEN_NOT_PROVIDED', 403, req.path); }
 
@@ -22,8 +36,8 @@ const jwtAuth = (req, res, next) => {
         console.log(err.message); // eslint-disable-line
         return res.error('TOKEN_INVALID', 403, req.path);
       }
-
-      console.log(decoded);
+      req.customerId = decoded.customerId;
+      req.customerLanguage = decoded.customerId;
       return next();
     },
   );

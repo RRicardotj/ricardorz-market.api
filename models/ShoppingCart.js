@@ -1,30 +1,34 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../common/connection');
+const Product = require('./Product');
 
 const TABLE_NAME = 'shopping_cart';
 
 const fields = {
-  item_id: {
+  itemId: {
     allowNull: true,
     primaryKey: true,
     type: Sequelize.INTEGER,
     autoIncrement: true,
+    field: 'item_id',
   },
-  cart_id: {
+  cartId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'cart',
       key: 'cart_id',
     },
+    field: 'cart_id',
   },
-  product_id: {
+  productId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'product',
       key: 'product_id',
     },
+    field: 'product_id',
   },
   attributes: {
     type: Sequelize.STRING(1000),
@@ -32,19 +36,24 @@ const fields = {
   },
   quantity: {
     type: Sequelize.INTEGER,
-    allowNull: true,
+    allowNull: false,
+    defaultValue: 1,
   },
-  buy_now: {
+  buyNow: {
     type: Sequelize.BOOLEAN,
-    allowNull: true,
+    allowNull: false,
+    defaultValue: true,
+    field: 'buy_now',
   },
-  added_on: {
+  addedOn: {
     type: Sequelize.DATE,
     allowNull: false,
+    field: 'added_on',
   },
 };
 
 const model = sequelize.define(TABLE_NAME, fields, { freezeTableName: true, timestamps: false });
 
+model.belongsTo(Product, { as: 'product', foreignKey: 'product_id' });
 
 module.exports = model;

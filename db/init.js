@@ -6,7 +6,7 @@
 const sequelize = require('../common/connection');
 
 // imports models
-const Deparment = require('../models/Deparment');
+const Deparment = require('../models/Department');
 const Category = require('../models/Category');
 const Product = require('../models/Product');
 const ProductAttribute = require('../models/ProductAttribute');

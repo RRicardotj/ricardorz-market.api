@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS shopping_cart (
   cart_id     INT      NOT NULL,
   product_id  INT           NOT NULL,
   attributes  VARCHAR(1000) NOT NULL,
-  quantity    INT           NOT NULL,
+  quantity    INT           NOT NULL  DEFAULT '1',
   buy_now     BOOL          NOT NULL  DEFAULT true,
   added_on    DATETIME      NOT NULL,
   PRIMARY KEY (item_id),
