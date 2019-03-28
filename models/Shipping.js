@@ -4,27 +4,31 @@ const sequelize = require('../common/connection');
 const TABLE_NAME = 'shipping';
 
 const fields = {
-  shipping_id: {
+  shippingId: {
     allowNull: true,
     primaryKey: true,
     type: Sequelize.INTEGER,
     autoIncrement: true,
+    field: 'shipping_id',
   },
-  shipping_type: {
+  shippingType: {
     allowNull: false,
     type: Sequelize.STRING(100),
+    field: 'shipping_type',
   },
-  shipping_cost: {
+  shippingCost: {
     allowNull: false,
     type: Sequelize.DECIMAL(10, 2),
+    field: 'shipping_cost',
   },
-  shipping_region_id: {
+  shippingRegionId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'shipping_region',
       key: 'shipping_region_id',
     },
+    field: 'shipping_region_id',
   },
 };
 
