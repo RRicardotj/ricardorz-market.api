@@ -4,71 +4,94 @@ const sequelize = require('../common/connection');
 const TABLE_NAME = 'customer';
 
 const fields = {
-  customer_id: {
+  customerId: {
     allowNull: true,
     primaryKey: true,
     type: Sequelize.INTEGER,
     autoIncrement: true,
+    field: 'customer_id',
   },
   name: {
     allowNull: false,
     type: Sequelize.STRING(50),
+    field: 'name',
   },
   email: {
     allowNull: false,
     type: Sequelize.STRING(100),
+    field: 'email',
   },
   password: {
     allowNull: false,
     type: Sequelize.STRING(50),
+    field: 'password',
   },
-  credit_card: {
+  creditCard: {
     allowNull: true,
     type: Sequelize.TEXT,
+    field: 'credit_card',
   },
-  address_1: {
+  address1: {
     allowNull: true,
     type: Sequelize.STRING(100),
+    field: 'address_1',
   },
-  address_2: {
+  address2: {
     allowNull: true,
     type: Sequelize.STRING(100),
+    field: 'address_2',
   },
   city: {
     allowNull: true,
     type: Sequelize.STRING(100),
+    field: 'city',
   },
   region: {
     allowNull: true,
     type: Sequelize.STRING(100),
   },
-  postal_code: {
+  postalCode: {
     allowNull: true,
     type: Sequelize.STRING(100),
+    field: 'postal_code',
   },
   country: {
     allowNull: true,
     type: Sequelize.STRING(100),
   },
-  shipping_region_id: {
+  shippingRegionId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     references: {
       model: 'shipping_region',
       key: 'shipping_region_id',
     },
+    field: 'shipping_region_id',
   },
-  day_phone: {
+  dayPhone: {
     allowNull: true,
     type: Sequelize.STRING(100),
+    field: 'day_phone',
   },
-  eve_phone: {
+  evePhone: {
     allowNull: true,
     type: Sequelize.STRING(100),
+    field: 'eve_phone',
   },
-  mob_phone: {
+  mobPhone: {
     allowNull: true,
     type: Sequelize.STRING(100),
+    field: 'mob_phone',
+  },
+  isEnabled: {
+    allowNull: false,
+    type: Sequelize.BOOLEAN,
+    defaultValue: true,
+  },
+  isActived: {
+    allowNull: false,
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
   },
 };
 

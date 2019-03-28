@@ -7,7 +7,9 @@
     "start": "nodemon index.js",
     "lint": "eslint .",
     "test": "./node_modules/mocha/bin/mocha",
-    "init-db": "node ./db/init.js"
+    "init-db": "node ./db/init.js",
+    "drop-db": "node ./db/drop.js",
+    "refresh-db": "node ./db/drop.js && node ./db/init.js"
   },
   "author": "Ricardo",
   "license": "MIT",

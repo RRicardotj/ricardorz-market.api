@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS customer (
   day_phone          varchar(100),
   eve_phone          varchar(100),
   mob_phone          varchar(100),
+  isEnabled     BOOL          NOT NULL  DEFAULT true,
+  isActived     BOOL          NOT NULL  DEFAULT false,
   PRIMARY KEY  (customer_id),
   UNIQUE KEY idx_customer_email (email),
   FOREIGN KEY(shipping_region_id) REFERENCES shipping_region(shipping_region_id),
