@@ -11,6 +11,7 @@ router.use('/category', require('./controllers/CategoryController'));
 router.use('/customer', require('./controllers/CustomerController'));
 router.use('/department', require('./controllers/DeparmentController'));
 router.use('/product', require('./controllers/ProductController'));
+router.use('/shipping-region', require('./controllers/ShippingRegionController'));
 
 router.get('/', (req, res) => {
   res.send('API SERVER UP');
