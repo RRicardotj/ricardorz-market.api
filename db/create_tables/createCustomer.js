@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS customer (
   mob_phone          varchar(100),
   isEnabled     BOOL          NOT NULL  DEFAULT true,
   isActived     BOOL          NOT NULL  DEFAULT false,
+  language               VARCHAR(2)   NOT NULL  DEFAULT 'en',
   PRIMARY KEY  (customer_id),
   UNIQUE KEY idx_customer_email (email),
   FOREIGN KEY(shipping_region_id) REFERENCES shipping_region(shipping_region_id),

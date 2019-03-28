@@ -6,6 +6,7 @@
   "UNAUTHORIZED_ACCESS": "Acceso no autorizado",
   "NOT_MODEL": "Debe especificar una entidad",
   "USER_DISABLED": "Usuario deshabilitado",
+  "USER_NON_ACIVATED": "Debe activar su usuario desde su email",
   "CREDENTIALS_IVALID": "Credenciales inválidas",
   "PASSWORD_CHANGED": "La contraseña ha sido cambiada",
   "PAGE_MUST_BE_A_NUMBER": "Page debe ser un número",

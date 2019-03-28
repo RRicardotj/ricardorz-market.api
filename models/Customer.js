@@ -93,6 +93,11 @@ const fields = {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
   },
+  language: {
+    allowNull: false,
+    type: Sequelize.STRING(2),
+    defaultValue: 'en',
+  },
 };
 
 const model = sequelize.define(TABLE_NAME, fields, { freezeTableName: true, timestamps: false });
