@@ -12,5 +12,9 @@
   "PAGE_MUST_BE_A_NUMBER": "Page debe ser un número",
   "CART_BELONGS_OTHER_USER": "Error intentando añadir elemento al carrito de compras, vuelva a intentarlo",
   "SHOPPING_CART_DATA_NEEDIT": "Data es requerida para añadir producto al carrito",
-  "PRODUCT_ID_NEEDIT": "productId es requerido"
+  "PRODUCT_ID_NEEDIT": "productId es requerido",
+  "EMAIL_TAKEN": "Este email ya fue tomado por otro usuario",
+  "PASSWORD_NOT_IDENTICAL": "La contraseña y la contraseña de confirmación son diferentes",
+  "SHIPPING_RG_NO_FOUND": "La región de envío no fue encontrada",
+  "CUSTOMER_CREATED": "Usuario creado sastifactoriamente, verifique su email para activar su cuenta"
 }

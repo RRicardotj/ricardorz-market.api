@@ -102,4 +102,14 @@ const fields = {
 
 const model = sequelize.define(TABLE_NAME, fields, { freezeTableName: true, timestamps: false });
 
+model.existEmail = email => sequelize
+  .query(
+    `SELECT COUNT(*) count
+    FROM customer WHERE email = :email`,
+    {
+      type: sequelize.QueryTypes.SELECT,
+      replacements: { email },
+    },
+  ).then(result => result[0].count > 0);
+
 module.exports = model;

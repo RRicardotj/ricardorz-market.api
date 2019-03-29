@@ -28,4 +28,13 @@ model.hasData = () => sequelize
     },
   ).then(result => result[0].count > 0);
 
+model.shippingRegionExist = shippingRegionId => sequelize
+  .query(
+    'SELECT COUNT(*) count FROM shipping_region WHERE shipping_region_id =:shippingRegionId',
+    {
+      type: sequelize.QueryTypes.SELECT,
+      replacements: { shippingRegionId },
+    },
+  ).then(result => result[0].count > 0);
+
 module.exports = model;
