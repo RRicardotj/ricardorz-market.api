@@ -4,6 +4,8 @@ const Handler = require('../Handler');
 const Customer = require('../../models/Customer');
 const Cart = require('../../models/Cart');
 const ShippingRegion = require('../../models/ShippingRegion');
+const ShoppingCart = require('../../models/ShoppingCart');
+const Product = require('../../models/Product');
 
 class CustomerController extends Handler {
   constructor(model = Customer, language) {
@@ -49,12 +51,45 @@ class CustomerController extends Handler {
             isEnabled: false,
           }, { transaction });
         } else {
-          cart.update({ customerId: customer.customerId }, { transaction });
+          await cart.update({ customerId: customer.customerId }, { transaction });
         }
 
         return customer.toJSON();
       }).catch((err) => { throw err; });
       return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async activateCustomer(customerId) {
+    try {
+      let customer = await this.findOne({ where: { customerId } });
+      customer = await customer.update({ isActived: true });
+
+      this.lenguage = customer.language;
+
+      let cart = await Cart.findOne({ where: { customerId } });
+      const shoppingCart = await ShoppingCart.findAll({
+        where: { cart_id: cart.cartId },
+        include: [{
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'productId'],
+        }],
+      }).then(items => items.map((item) => {
+        const { product } = item;
+        product.thumbnail = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.thumbnail}`;
+        return product;
+      }));
+
+      cart = { ...cart.toJSON(), shoppingCart };
+
+      customer = customer.toJSON();
+
+      delete customer.password;
+
+      return { ...customer, ...cart };
     } catch (error) {
       throw error;
     }

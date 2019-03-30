@@ -6,6 +6,7 @@ const mailgun = require('mailgun-js')({ apiKey: process.env.MAILGUN_KEY, domain:
 const pug = require('pug');
 const withCatchAsync = require('../../common/catchAsyncErrors');
 const Validator = require('../../common/validator');
+const CustomError = require('../../common/CustomError');
 const CustomerController = require('./CustomerController');
 const LITERALS = require('../../utils/LITERALS');
 
@@ -20,7 +21,9 @@ const LITERALS = require('../../utils/LITERALS');
  * @returns {undefined}
  */
 const sendMailHandler = dataMailgun => mailgun.messages().send(dataMailgun, (error, body) => {
-  console.log(error); // eslint-disable-line
+  if (error) {
+    console.log(error); // eslint-disable-line
+  }
   console.log(`SENDING TO: ${dataMailgun.to}>>> ${JSON.stringify(body)}`); // eslint-disable-line
 });
 
@@ -45,46 +48,62 @@ const checkHandler = async (req, res) => {
 };
 
 const signUpHandler = async (req, res) => {
-  const customerController = new CustomerController(undefined, req.query.language);
+  try {
+    const customerController = new CustomerController(undefined, req.query.language);
 
-  const {
-    email, password, confirm, name, shippingRegionId, cartId,
-  } = req.body;
+    const {
+      email, password, confirm, name, shippingRegionId, cartId,
+    } = req.body;
 
-  const data = {
-    email,
-    password,
-    confirm,
-    name,
-    shippingRegionId,
-    cartId,
-    password_confirmation: confirm,
-  };
+    const data = {
+      email,
+      password,
+      confirm,
+      name,
+      shippingRegionId,
+      cartId,
+      password_confirmation: confirm,
+    };
 
-  const isValid = await Validator.validateAsync(data, getValidationRules());
+    const isValid = await Validator.validateAsync(data, getValidationRules());
 
-  if (isValid !== true) { return res.errorValidation(isValid); }
+    if (isValid !== true) { return res.errorValidation(isValid); }
 
-  const customer = await customerController.signUp();
-  const message = LITERALS.getMessage(LITERALS.CUSTOMER_CREATED, customer.language);
+    const customer = await customerController.signUp(data);
+    const message = LITERALS.getMessage(LITERALS.CUSTOMER_CREATED, customer.language);
 
-  const html = pug.renderFile('./templates/activeAccount.pug', {
-    endpoint: `${process.env.SRV_DOMAIN}/customer/${customer.customerId}/activate`,
-  });
+    const html = pug.renderFile('./templates/activeAccount.pug', {
+      endpoint: `${process.env.SRV_DOMAIN}${process.env.SRV_PORT ? `:${process.env.SRV_PORT}` : ''}/customer/${customer.customerId}/activate`,
+    });
 
-  const dataMailgun = {
-    from: `Notificaciones <${process.env.MAILGUN_SENDER}@${process.env.MAILGUN_DOMAIN}>`,
-    to: customer.email,
-    subject: 'Activation',
-    html,
-  };
+    const dataMailgun = {
+      from: 'Ricardorz market <postmaster@sandbox32f7f4ff03d540918cbae8f6f22bfcf7.mailgun.org>',
+      to: customer.email,
+      subject: 'Activation',
+      html,
+    };
 
-  await sendMailHandler(dataMailgun);
-  return res.json({ message });
+
+    await sendMailHandler(dataMailgun);
+    return res.json({ message });
+  } catch (error) {
+    console.log(error);
+    throw new CustomError(LITERALS.getMessage('AN_ERROR', req.query.language));
+  }
+};
+
+const activateHandler = async (req, res) => {
+  const customerController = new CustomerController();
+
+  await customerController.activateCustomer(req.params.id);
+
+  return res.redirect(`${process.env.SRV_DOMAIN_CLIENT}:${process.env.SRV_PORT_CLIEN}/`);
 };
 
 router.get('/check', withCatchAsync(checkHandler));
 
 router.post('/signup', withCatchAsync(signUpHandler));
+
+router.get('/:id/activate', withCatchAsync(activateHandler));
 
 module.exports = router;
