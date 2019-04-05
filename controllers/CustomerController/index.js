@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 
 const router = express.Router();
 
@@ -95,9 +96,11 @@ const signUpHandler = async (req, res) => {
 const activateHandler = async (req, res) => {
   const customerController = new CustomerController();
 
-  await customerController.activateCustomer(req.params.id);
+  const customer = await customerController.activateCustomer(req.params.id);
 
-  return res.redirect(`${process.env.SRV_DOMAIN_CLIENT}:${process.env.SRV_PORT_CLIEN}/`);
+  const token = jwt.sign({ customerId: customer.id, type: 'customer' }, process.env.KEY_APP, { expiresIn: '48h' });
+
+  return res.redirect(`${process.env.SRV_DOMAIN_CLIENT}:${process.env.SRV_PORT_CLIEN}/activate?cartId=${customer.cart.id}&token=${token}`);
 };
 
 router.get('/check', withCatchAsync(checkHandler));

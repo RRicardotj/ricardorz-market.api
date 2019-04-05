@@ -89,7 +89,7 @@ class CustomerController extends Handler {
 
       delete customer.password;
 
-      return { ...customer, ...cart };
+      return { ...customer, cart };
     } catch (error) {
       throw error;
     }
