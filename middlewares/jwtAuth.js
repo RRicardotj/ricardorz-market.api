@@ -28,6 +28,7 @@ const jwtAuth = (req, res, next) => {
 
             return next();
           }
+          return undefined;
         },
       );
     }

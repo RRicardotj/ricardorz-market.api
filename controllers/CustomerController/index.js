@@ -1,5 +1,6 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
+const { promisify } = require('util');
 
 const router = express.Router();
 
@@ -7,7 +8,6 @@ const mailgun = require('mailgun-js')({ apiKey: process.env.MAILGUN_KEY, domain:
 const pug = require('pug');
 const withCatchAsync = require('../../common/catchAsyncErrors');
 const Validator = require('../../common/validator');
-const CustomError = require('../../common/CustomError');
 const CustomerController = require('./CustomerController');
 const LITERALS = require('../../utils/LITERALS');
 
@@ -21,11 +21,10 @@ const LITERALS = require('../../utils/LITERALS');
  * @param {string} dataMailGun.html html template to send
  * @returns {undefined}
  */
-const sendMailHandler = dataMailgun => mailgun.messages().send(dataMailgun, (error, body) => {
+const sendMailHandler = dataMailgun => mailgun.messages().send(dataMailgun, (error) => {
   if (error) {
     console.log(error); // eslint-disable-line
   }
-  console.log(`SENDING TO: ${dataMailgun.to}>>> ${JSON.stringify(body)}`); // eslint-disable-line
 });
 
 
@@ -45,7 +44,14 @@ function getValidationRules() {
 }
 
 const checkHandler = async (req, res) => {
-  res.json({ isValid: true });
+  const verify = promisify(jwt.verify);
+  let token = req.headers.authorization || req.query.token;
+  token = token.split(' ');
+
+  const isValid = await verify((token.length > 1 ? token[1] : token[0]), process.env.KEY_APP)
+    .catch(() => false);
+
+  return res.json({ isValid });
 };
 
 const signUpHandler = async (req, res) => {
@@ -78,7 +84,7 @@ const signUpHandler = async (req, res) => {
     });
 
     const dataMailgun = {
-      from: 'Ricardorz market <postmaster@sandbox32f7f4ff03d540918cbae8f6f22bfcf7.mailgun.org>',
+      from: `Ricardorz market <${process.env.MAILGUN_SENDER}@${process.env.MAILGUN_DOMAIN}>`,
       to: customer.email,
       subject: 'Activation',
       html,
@@ -88,8 +94,7 @@ const signUpHandler = async (req, res) => {
     await sendMailHandler(dataMailgun);
     return res.json({ message });
   } catch (error) {
-    console.log(error);
-    throw new CustomError(LITERALS.getMessage('AN_ERROR', req.query.language));
+    throw error;
   }
 };
 

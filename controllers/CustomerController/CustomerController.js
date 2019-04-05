@@ -23,17 +23,17 @@ class CustomerController extends Handler {
         const existEmail = await this.model.existEmail(email);
 
         if (existEmail) {
-          throw new this.CustomError(this.getMessage(this.LITERALS.EMAIL_TAKEN));
+          throw new this.CustomError(this.getMessage(this.LITERALS.EMAIL_TAKEN), 401);
         }
 
         if (password !== confirm) {
-          throw new this.CustomError(this.getMessage(this.LITERALS.PASSWORD_NOT_IDENTICAL));
+          throw new this.CustomError(this.getMessage(this.LITERALS.PASSWORD_NOT_IDENTICAL), 403);
         }
 
         const shippingRegionExist = await ShippingRegion.shippingRegionExist(shippingRegionId);
 
         if (!shippingRegionExist) {
-          throw new this.CustomError(this.getMessage(this.LITERALS.SHIPPING_RG_NO_FOUND));
+          throw new this.CustomError(this.getMessage(this.LITERALS.SHIPPING_RG_NO_FOUND), 403);
         }
 
         const hashedPassword = bcrypt.hashSync(password, 10);
