@@ -25,8 +25,9 @@ const jwtAuth = (req, res, next) => {
               req.customerId = decoded.customerId;
               req.customerLanguage = customer.language;
             }
+
+            return next();
           }
-          return next();
         },
       );
     }
