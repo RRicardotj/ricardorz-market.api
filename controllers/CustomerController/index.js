@@ -9,6 +9,7 @@ const pug = require('pug');
 const withCatchAsync = require('../../common/catchAsyncErrors');
 const Validator = require('../../common/validator');
 const CustomerController = require('./CustomerController');
+const CartController = require('../CartController/CartController');
 const LITERALS = require('../../utils/LITERALS');
 
 
@@ -44,14 +45,39 @@ function getValidationRules() {
 }
 
 const checkHandler = async (req, res) => {
+  const customerController = new CustomerController(undefined, req.query.language);
+
   const verify = promisify(jwt.verify);
   let token = req.headers.authorization || req.query.token;
   token = token.split(' ');
 
-  const isValid = await verify((token.length > 1 ? token[1] : token[0]), process.env.KEY_APP)
+  if (!token) {
+    res.json({ isValid: false });
+  }
+
+  const decode = await verify((token.length > 1 ? token[1] : token[0]), process.env.KEY_APP)
     .catch(() => false);
 
-  return res.json({ isValid });
+  let isValid = !!decode;
+  let cartId;
+  let shoppingCart;
+
+  if (decode && decode.type === 'customer') {
+    isValid = await customerController.isValidCustomer(decode.customerId)
+      .catch(() => (res.json({ isValid: false })));
+
+    if (isValid) {
+      const cartController = new CartController(undefined, decode.customerLanguage);
+
+      const cart = await cartController.getCartByCustomerId(decode.customerId)
+        .catch(() => (res.json({ isValid: false })));
+
+      cartId = cart.cartId; // eslint-disable-line
+      shoppingCart = cart.shoppingCart; // eslint-disable-line
+    }
+  }
+
+  return res.json({ isValid, cartId, shoppingCart });
 };
 
 const signUpHandler = async (req, res) => {
@@ -103,9 +129,14 @@ const activateHandler = async (req, res) => {
 
   const customer = await customerController.activateCustomer(req.params.id);
 
-  const token = jwt.sign({ customerId: customer.id, type: 'customer' }, process.env.KEY_APP, { expiresIn: '48h' });
+  const token = jwt.sign({
+    customerId: customer.customerId,
+    type: 'customer',
+    cartId: customer.cart.cartId,
+    customerLanguage: customer.language,
+  }, process.env.KEY_APP, { expiresIn: '48h' });
 
-  return res.redirect(`${process.env.SRV_DOMAIN_CLIENT}:${process.env.SRV_PORT_CLIEN}/activate?cartId=${customer.cart.id}&token=${token}`);
+  return res.redirect(`${process.env.SRV_DOMAIN_CLIENT}:${process.env.SRV_PORT_CLIEN}/activated?cartId=${customer.cart.cartId}&token=${token}`);
 };
 
 router.get('/check', withCatchAsync(checkHandler));

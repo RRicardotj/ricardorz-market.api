@@ -9,6 +9,7 @@ class CartController extends Handler {
 
     this.getCartById = this.getCartById.bind(this);
     this.addProduct = this.addProduct.bind(this);
+    this.getCartByCustomerId = this.getCartByCustomerId.bind(this);
   }
 
   async getCartById(cartId, customerId) {
@@ -52,6 +53,32 @@ class CartController extends Handler {
       return item;
     }));
     return { ...cart.toJSON(), shoppingCart };
+  }
+
+  async getCartByCustomerId(customerId) {
+    try {
+      const cart = await this.findOne({ where: { customerId } });
+
+      if (!cart) {
+        throw new this.CustomError(this.getMessage(this.LITERALS.NOT_FOUND), 403);
+      }
+
+      const shoppingCart = await ShoppingCart.findAll({
+        where: { cart_id: cart.cartId },
+        include: [{
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'productId'],
+        }],
+      }).then(items => items.map((item) => {
+        const { product } = item;
+        product.thumbnail = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.thumbnail}`;
+        return item;
+      }));
+      return { ...cart.toJSON(), shoppingCart };
+    } catch (error) {
+      throw error;
+    }
   }
 
   async addProduct({

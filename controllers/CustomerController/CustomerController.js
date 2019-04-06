@@ -12,6 +12,8 @@ class CustomerController extends Handler {
     super(model, language);
 
     this.signUp = this.signUp.bind(this);
+    this.activateCustomer = this.activateCustomer.bind(this);
+    this.isValidCustomer = this.isValidCustomer.bind(this);
   }
 
   async signUp({
@@ -93,6 +95,15 @@ class CustomerController extends Handler {
     } catch (error) {
       throw error;
     }
+  }
+
+  async isValidCustomer(customerId) {
+    const customer = await this.findOne({
+      where: { customerId },
+      attributes: ['isActived', 'isEnabled'],
+    });
+
+    return (customer.isActived && customer.isEnabled);
   }
 }
 

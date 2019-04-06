@@ -1,36 +1,34 @@
+const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const Customer = require('../models/Customer');
 const LITERALS = require('../utils/LITERALS');
-// const moment = require('moment');
-// const User = require('../models/User');
-// const Session = require('../models/Session');
 
+const jwtVerify = promisify(jwt.verify);
 
-const jwtAuth = (req, res, next) => {
+const jwtAuth = async (req, res, next) => {
   let token = req.headers.authorization || req.query.token;
   if (req.path.substring(0, 6) !== '/admin' && req.path.substring(0, 5) !== '/user') {
     if (token) {
       token = token.split(' ');
 
-      jwt.verify(
-        (token.length > 1 ? token[1] : token[0]),
-        process.env.KEY_APP, async (err, decoded) => {
-          if (!err) {
-            const customer = await Customer.findOne({
-              where: { customerId: decoded.customerId },
-              attributes: ['isActived', 'customerId', 'isEnabled', 'language'],
-            });
+      const decoded = await jwtVerify((token.length > 1 ? token[1] : token[0]), process.env.KEY_APP)
+        .catch((err) => {
+          console.log(err.message); // eslint-disable-line
+          return res
+            .error(LITERALS.getMessage(LITERALS.TOKEN_INVALID, req.query.language), 401, req.path);
+        });
 
-            if (customer.isEnabled && customer.isActived) {
-              req.customerId = decoded.customerId;
-              req.customerLanguage = customer.language;
-            }
+      const customer = await Customer.findOne({
+        where: { customerId: decoded.customerId },
+        attributes: ['isActived', 'customerId', 'isEnabled', 'language'],
+      });
 
-            return next();
-          }
-          return undefined;
-        },
-      );
+      if (customer.isEnabled && customer.isActived) {
+        req.customerId = decoded.customerId;
+        req.customerLanguage = customer.language;
+      }
+
+      return next();
     }
 
     return next();
