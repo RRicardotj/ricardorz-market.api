@@ -125,23 +125,50 @@ const signUpHandler = async (req, res) => {
 };
 
 const activateHandler = async (req, res) => {
-  const customerController = new CustomerController();
+  try {
+    const customerController = new CustomerController();
 
-  const customer = await customerController.activateCustomer(req.params.id);
+    const customer = await customerController.activateCustomer(req.params.id);
 
-  const token = jwt.sign({
-    customerId: customer.customerId,
-    type: 'customer',
-    cartId: customer.cart.cartId,
-    customerLanguage: customer.language,
-  }, process.env.KEY_APP, { expiresIn: '48h' });
+    const token = jwt.sign({
+      customerId: customer.customerId,
+      type: 'customer',
+      cartId: customer.cart.cartId,
+      customerLanguage: customer.language,
+    }, process.env.KEY_APP, { expiresIn: '48h' });
 
-  return res.redirect(`${process.env.SRV_DOMAIN_CLIENT}:${process.env.SRV_PORT_CLIEN}/activated?cartId=${customer.cart.cartId}&token=${token}`);
+    return res.redirect(`${process.env.SRV_DOMAIN_CLIENT}:${process.env.SRV_PORT_CLIEN}/activated?cartId=${customer.cart.cartId}&token=${token}`);
+  } catch (error) {
+    throw error;
+  }
+};
+
+const signInHandler = async (req, res) => {
+  try {
+    const customerController = new CustomerController();
+
+    const customer = await customerController.signIn(req.body.email, req.body.password);
+
+    const token = jwt.sign({
+      customerId: customer.customerId,
+      type: 'customer',
+      cartId: customer.cart.cartId,
+      customerLanguage: customer.language,
+    }, process.env.KEY_APP, { expiresIn: '48h' });
+
+    return res.json({
+      token, shoppingCart: customer.cart.shoppingCart, cartId: customer.cart.cartId,
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 router.get('/check', withCatchAsync(checkHandler));
 
 router.post('/signup', withCatchAsync(signUpHandler));
+
+router.post('/signin', withCatchAsync(signInHandler));
 
 router.get('/:id/activate', withCatchAsync(activateHandler));
 

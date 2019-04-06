@@ -1,5 +1,6 @@
 {
   "PASSWORD_INVALID": "Invalid password",
+  "INVALID_CREDENTIALS": "Invalid credentials",
   "RESOURCE_NOT_FOUND": "Resource not found",
   "NOT_FOUND": "Not found",
   "TOKEN_INVALID": "Invalid token",

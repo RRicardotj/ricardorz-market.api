@@ -5,12 +5,12 @@ const Validator = require('../common/validator');
 const sequelize = require('../common/connection');
 
 class Handler {
-  constructor(model, lenguage = 'en') {
+  constructor(model, language = 'en') {
     // if (!model) { return null; }
     this.model = model;
     this.CustomError = CustomError;
     this.LITERALS = LITERALS;
-    this.lenguage = lenguage;
+    this.language = language;
     this.moment = moment;
     this.Validator = Validator;
     this.sequelize = sequelize;
@@ -25,8 +25,8 @@ class Handler {
     this.destroy = this.destroy.bind(this);
   }
 
-  getMessage(LITERAL) {
-    return this.LITERALS.getMessage(LITERAL, this.lenguage);
+  getMessage(LITERAL, language = this.language) {
+    return this.LITERALS.getMessage(LITERAL, language);
   }
 
   /**

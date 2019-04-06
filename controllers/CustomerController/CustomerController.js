@@ -14,6 +14,7 @@ class CustomerController extends Handler {
     this.signUp = this.signUp.bind(this);
     this.activateCustomer = this.activateCustomer.bind(this);
     this.isValidCustomer = this.isValidCustomer.bind(this);
+    this.signIn = this.signIn.bind(this);
   }
 
   async signUp({
@@ -39,6 +40,8 @@ class CustomerController extends Handler {
         }
 
         const hashedPassword = bcrypt.hashSync(password, 10);
+
+        console.log(password, hashedPassword);
 
         const customer = await this.model.create({
           email, password: hashedPassword, name, shippingRegionId,
@@ -69,7 +72,7 @@ class CustomerController extends Handler {
       let customer = await this.findOne({ where: { customerId } });
       customer = await customer.update({ isActived: true });
 
-      this.lenguage = customer.language;
+      this.language = customer.language;
 
       let cart = await Cart.findOne({ where: { customerId } });
       const shoppingCart = await ShoppingCart.findAll({
@@ -104,6 +107,60 @@ class CustomerController extends Handler {
     });
 
     return (customer.isActived && customer.isEnabled);
+  }
+
+  async signIn(email, password) {
+    try {
+      let customer = await this.findOne({ where: { email } });
+
+      if (!customer) {
+        throw new this
+          .CustomError(this.LITERALS.getMessage(this.LITERALS.INVALID_CREDENTIALS), 401);
+      }
+
+      this.language = customer.language;
+
+      if (!customer.isActived) {
+        throw new this.CustomError(this.LITERALS.getMessage(this.LITERALS.USER_NON_ACIVATED), 401);
+      }
+
+      if (!customer.isEnabled) {
+        throw new this.CustomError(this.LITERALS.getMessage(this.LITERALS.USER_DISABLED), 401);
+      }
+
+      const isValid = await bcrypt.compare(String(password), customer.password);
+
+      console.log(customer.password);
+
+      if (!isValid) {
+        throw new this
+          .CustomError(this.LITERALS.getMessage(this.LITERALS.INVALID_CREDENTIALS), 401);
+      }
+
+      let cart = await Cart.findOne({ where: { customerId: customer.customerId } });
+      const shoppingCart = await ShoppingCart.findAll({
+        where: { cart_id: cart.cartId },
+        include: [{
+          model: Product,
+          as: 'product',
+          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'productId'],
+        }],
+      }).then(items => items.map((item) => {
+        const { product } = item;
+        product.thumbnail = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.thumbnail}`;
+        return product;
+      }));
+
+      cart = { ...cart.toJSON(), shoppingCart };
+
+      customer = customer.toJSON();
+
+      delete customer.password;
+
+      return { ...customer, cart };
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

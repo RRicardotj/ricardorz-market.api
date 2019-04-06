@@ -1,5 +1,6 @@
 {
   "PASSWORD_INVALID": "Contraseña inválida",
+  "INVALID_CREDENTIALS": "Credenciales inválidas",
   "RESOURCE_NOT_FOUND": "Recurso no encontrado",
   "NOT_FOUND": "No encontrado",
   "TOKEN_INVALID": "Token inválido",
