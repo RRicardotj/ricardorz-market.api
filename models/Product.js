@@ -148,7 +148,7 @@ model.searchByName = (name, page) => {
 
 model.getAttributesAvailable = (productId, attributeType) => sequelize
   .query(
-    `SELECT prod.product_id productId, attV.value, attV.attribute_value_id attributeValueId
+    `SELECT attV.value, attV.attribute_value_id attributeValueId
     FROM product prod
     LEFT JOIN product_attribute prodAtt ON prodAtt.product_id = prod.product_id
     LEFT JOIN attribute_value attV ON attV.attribute_value_id = prodAtt.attribute_value_id
