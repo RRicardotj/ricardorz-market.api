@@ -4,7 +4,7 @@ const sequelize = require('../common/connection');
 const TABLE_NAME = 'product_attribute';
 
 const fields = {
-  product_id: {
+  productId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     primaryKey: true,
@@ -12,8 +12,9 @@ const fields = {
       model: 'product',
       key: 'product_id',
     },
+    field: 'product_id',
   },
-  attribute_value_id: {
+  attributeValueId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     primaryKey: true,
@@ -21,6 +22,7 @@ const fields = {
       model: 'attribute_value',
       key: 'attribute_value_id',
     },
+    field: 'attribute_value_id',
   },
 };
 

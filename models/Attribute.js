@@ -4,11 +4,12 @@ const sequelize = require('../common/connection');
 const TABLE_NAME = 'attribute';
 
 const fields = {
-  attribute_id: {
+  attributeId: {
     allowNull: true,
     primaryKey: true,
     type: Sequelize.INTEGER,
     autoIncrement: true,
+    field: 'attribute_id',
   },
   name: {
     allowNull: false,

@@ -4,7 +4,7 @@ const sequelize = require('../common/connection');
 const TABLE_NAME = 'product_category';
 
 const fields = {
-  product_id: {
+  productId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     primaryKey: true,
@@ -12,8 +12,9 @@ const fields = {
       model: 'product',
       key: 'product_id',
     },
+    field: 'product_id',
   },
-  department_id: {
+  departmentId: {
     type: Sequelize.INTEGER,
     allowNull: false,
     primaryKey: true,
@@ -21,6 +22,7 @@ const fields = {
       model: 'department',
       key: 'department_id',
     },
+    field: 'department_id',
   },
 };
 
