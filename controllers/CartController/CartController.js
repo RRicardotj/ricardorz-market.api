@@ -1,3 +1,4 @@
+/* eslint-disable class-methods-use-this */
 const Handler = require('../Handler');
 const Cart = require('../../models/Cart');
 const ShoppingCart = require('../../models/ShoppingCart');
@@ -10,6 +11,7 @@ class CartController extends Handler {
     this.getCartById = this.getCartById.bind(this);
     this.addProduct = this.addProduct.bind(this);
     this.getCartByCustomerId = this.getCartByCustomerId.bind(this);
+    this.getProductsInCart = this.getProductsInCart.bind(this);
   }
 
   async getCartById(cartId, customerId) {
@@ -27,32 +29,74 @@ class CartController extends Handler {
       cart = await this.findOne({ where: { customer_id: customerId } });
       const shoppingCart = await ShoppingCart.findAll({
         where: { cart_id: cart.cartId },
+        attributes: ['itemId', 'quantity', 'productId', 'attributes'],
         include: [{
           model: Product,
           as: 'product',
-          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'productId'],
+          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'image', 'image2', 'productId'],
+          raw: true,
         }],
-      }).then(items => items.map((item) => {
+      });
+
+      const items = [];
+
+      for (let i = 0; i < shoppingCart.length; i += 1) {
+        const item = shoppingCart[i].toJSON();
+
         const { product } = item;
         product.thumbnail = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.thumbnail}`;
-        return product;
-      }));
-      return { ...cart.toJSON(), shoppingCart };
+        product.image = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image}`;
+        product.image2 = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image2}`;
+
+        item.attributes = JSON.parse(item.attributes);
+
+        const colorsAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Color');
+        console.log(colorsAvealibles);
+
+        const sizeAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Size');
+        item.colorsAvealibles = colorsAvealibles;
+        item.sizeAvealibles = sizeAvealibles;
+
+        items.push(item);
+      }
+
+      return { ...cart.toJSON(), shoppingCart: items };
     }
 
     const shoppingCart = await ShoppingCart.findAll({
       where: { cart_id: cart.cartId },
+      attributes: ['itemId', 'quantity', 'productId', 'attributes'],
       include: [{
         model: Product,
         as: 'product',
-        attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'productId'],
+        attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'image', 'image2', 'productId'],
+        raw: true,
       }],
-    }).then(items => items.map((item) => {
+    });
+
+    const items = [];
+
+    for (let i = 0; i < shoppingCart.length; i += 1) {
+      const item = shoppingCart[i].toJSON();
+
       const { product } = item;
       product.thumbnail = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.thumbnail}`;
-      return item;
-    }));
-    return { ...cart.toJSON(), shoppingCart };
+      product.image = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image}`;
+      product.image2 = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image2}`;
+
+      item.attributes = JSON.parse(item.attributes);
+
+      const colorsAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Color');
+      console.log(colorsAvealibles);
+
+      const sizeAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Size');
+      item.colorsAvealibles = colorsAvealibles;
+      item.sizeAvealibles = sizeAvealibles;
+
+      items.push(item);
+    }
+
+    return { ...cart.toJSON(), shoppingCart: items };
   }
 
   async getCartByCustomerId(customerId) {
@@ -65,17 +109,38 @@ class CartController extends Handler {
 
       const shoppingCart = await ShoppingCart.findAll({
         where: { cart_id: cart.cartId },
+        attributes: ['itemId', 'quantity', 'productId', 'attributes'],
         include: [{
           model: Product,
           as: 'product',
-          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'productId'],
+          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'image', 'image2', 'productId'],
+          raw: true,
         }],
-      }).then(items => items.map((item) => {
+      });
+
+      const items = [];
+
+      for (let i = 0; i < shoppingCart.length; i += 1) {
+        const item = shoppingCart[i].toJSON();
+
         const { product } = item;
         product.thumbnail = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.thumbnail}`;
-        return item;
-      }));
-      return { ...cart.toJSON(), shoppingCart };
+        product.image = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image}`;
+        product.image2 = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image2}`;
+
+        item.attributes = JSON.parse(item.attributes);
+
+        const colorsAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Color');
+        console.log(colorsAvealibles);
+
+        const sizeAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Size');
+        item.colorsAvealibles = colorsAvealibles;
+        item.sizeAvealibles = sizeAvealibles;
+
+        items.push(item);
+      }
+
+      return { ...cart.toJSON(), shoppingCart: items };
     } catch (error) {
       throw error;
     }
@@ -202,6 +267,43 @@ class CartController extends Handler {
       return item;
     }));
     return { ...cart.toJSON(), shoppingCart };
+  }
+
+  async getProductsInCart(cartId) {
+    const shoppingCart = await ShoppingCart.findAll({
+      where: { cart_id: cartId },
+      attributes: ['itemId', 'quantity', 'productId', 'attributes'],
+      include: [{
+        model: Product,
+        as: 'product',
+        attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'image', 'image2', 'productId'],
+        raw: true,
+      }],
+    });
+
+    const items = [];
+
+    for (let i = 0; i < shoppingCart.length; i += 1) {
+      const item = shoppingCart[i].toJSON();
+
+      const { product } = item;
+      product.thumbnail = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.thumbnail}`;
+      product.image = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image}`;
+      product.image2 = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image2}`;
+
+      item.attributes = JSON.parse(item.attributes);
+
+      const colorsAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Color');
+      console.log(colorsAvealibles);
+
+      const sizeAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Size');
+      item.colorsAvealibles = colorsAvealibles;
+      item.sizeAvealibles = sizeAvealibles;
+
+      items.push(item);
+    }
+
+    return items;
   }
 }
 

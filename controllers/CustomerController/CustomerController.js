@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable class-methods-use-this */
 const bcrypt = require('bcryptjs');
 const Handler = require('../Handler');
@@ -140,18 +141,38 @@ class CustomerController extends Handler {
       let cart = await Cart.findOne({ where: { customerId: customer.customerId } });
       const shoppingCart = await ShoppingCart.findAll({
         where: { cart_id: cart.cartId },
+        attributes: ['itemId', 'quantity', 'productId', 'attributes'],
         include: [{
           model: Product,
           as: 'product',
-          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'productId'],
+          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'image', 'image2', 'productId'],
+          raw: true,
         }],
-      }).then(items => items.map((item) => {
+      });
+
+      const items = [];
+
+      for (let i = 0; i < shoppingCart.length; i += 1) {
+        const item = shoppingCart[i].toJSON();
+
         const { product } = item;
         product.thumbnail = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.thumbnail}`;
-        return product;
-      }));
+        product.image = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image}`;
+        product.image2 = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image2}`;
 
-      cart = { ...cart.toJSON(), shoppingCart };
+        item.attributes = JSON.parse(item.attributes);
+
+        const colorsAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Color');
+        console.log(colorsAvealibles);
+
+        const sizeAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Size');
+        item.colorsAvealibles = colorsAvealibles;
+        item.sizeAvealibles = sizeAvealibles;
+
+        items.push(item);
+      }
+
+      cart = { ...cart.toJSON(), shoppingCart: items };
 
       customer = customer.toJSON();
 

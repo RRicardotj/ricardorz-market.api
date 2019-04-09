@@ -11,7 +11,7 @@
   "CREDENTIALS_IVALID": "Invalid credentials",
   "PASSWORD_CHANGED": "Password has been changed",
   "PAGE_MUST_BE_A_NUMBER": "Page must be a number",
-  "CART_BELONGS_OTHER_USER": "Error trying add a product to shopping cart, try again",
+  "CART_BELONGS_OTHER_USER": "Error trying get shopping cart products, try again",
   "SHOPPING_CART_DATA_NEEDIT": "Data is required for add a product to cart",
   "PRODUCT_ID_NEEDIT": "productId is required",
   "EMAIL_TAKEN": "This email was taken for other user",
