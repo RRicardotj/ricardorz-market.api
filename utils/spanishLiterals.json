@@ -11,7 +11,7 @@
   "CREDENTIALS_IVALID": "Credenciales inválidas",
   "PASSWORD_CHANGED": "La contraseña ha sido cambiada",
   "PAGE_MUST_BE_A_NUMBER": "Page debe ser un número",
-  "CART_BELONGS_OTHER_USER": "Error intentando añadir elemento al carrito de compras, vuelva a intentarlo",
+  "CART_BELONGS_OTHER_USER": "Error intentando obtener los productos del carrito, vuelva a intentarlo",
   "SHOPPING_CART_DATA_NEEDIT": "Data es requerida para añadir producto al carrito",
   "PRODUCT_ID_NEEDIT": "productId es requerido",
   "EMAIL_TAKEN": "Este email ya fue tomado por otro usuario",

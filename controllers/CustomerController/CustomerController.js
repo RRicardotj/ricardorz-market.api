@@ -7,6 +7,7 @@ const Cart = require('../../models/Cart');
 const ShippingRegion = require('../../models/ShippingRegion');
 const ShoppingCart = require('../../models/ShoppingCart');
 const Product = require('../../models/Product');
+const CartController = require('../CartController/CartController');
 
 class CustomerController extends Handler {
   constructor(model = Customer, language) {
@@ -77,7 +78,7 @@ class CustomerController extends Handler {
 
       let cart = await Cart.findOne({ where: { customerId } });
       const shoppingCart = await ShoppingCart.findAll({
-        where: { cart_id: cart.cartId },
+        where: { cart_id: cart.cartId, buyNow: true },
         include: [{
           model: Product,
           as: 'product',
@@ -121,6 +122,8 @@ class CustomerController extends Handler {
 
       this.language = customer.language;
 
+      const cartController = new CartController(undefined, customer.language);
+
       if (!customer.isActived) {
         throw new this.CustomError(this.LITERALS.getMessage(this.LITERALS.USER_NON_ACIVATED), 401);
       }
@@ -131,54 +134,18 @@ class CustomerController extends Handler {
 
       const isValid = await bcrypt.compare(String(password), customer.password);
 
-      console.log(customer.password);
-
       if (!isValid) {
         throw new this
           .CustomError(this.LITERALS.getMessage(this.LITERALS.INVALID_CREDENTIALS), 401);
       }
 
-      let cart = await Cart.findOne({ where: { customerId: customer.customerId } });
-      const shoppingCart = await ShoppingCart.findAll({
-        where: { cart_id: cart.cartId },
-        attributes: ['itemId', 'quantity', 'productId', 'attributes'],
-        include: [{
-          model: Product,
-          as: 'product',
-          attributes: ['name', 'description', 'price', 'discountedPrice', 'thumbnail', 'image', 'image2', 'productId'],
-          raw: true,
-        }],
-      });
-
-      const items = [];
-
-      for (let i = 0; i < shoppingCart.length; i += 1) {
-        const item = shoppingCart[i].toJSON();
-
-        const { product } = item;
-        product.thumbnail = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.thumbnail}`;
-        product.image = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image}`;
-        product.image2 = `${process.env.SRV_DOMAIN}:${process.env.SRV_PORT}/product_image/${product.image2}`;
-
-        item.attributes = JSON.parse(item.attributes);
-
-        const colorsAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Color');
-        console.log(colorsAvealibles);
-
-        const sizeAvealibles = await Product.getAttributesAvealible(item.product.productId, 'Size');
-        item.colorsAvealibles = colorsAvealibles;
-        item.sizeAvealibles = sizeAvealibles;
-
-        items.push(item);
-      }
-
-      cart = { ...cart.toJSON(), shoppingCart: items };
+      const shoppingCart = await cartController.getCartByCustomerId(customer.customerId);
 
       customer = customer.toJSON();
 
       delete customer.password;
 
-      return { ...customer, cart };
+      return { ...customer, ...shoppingCart };
     } catch (error) {
       throw error;
     }

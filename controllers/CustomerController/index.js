@@ -152,12 +152,12 @@ const signInHandler = async (req, res) => {
     const token = jwt.sign({
       customerId: customer.customerId,
       type: 'customer',
-      cartId: customer.cart.cartId,
+      cartId: customer.cartId,
       customerLanguage: customer.language,
     }, process.env.KEY_APP, { expiresIn: '48h' });
 
     return res.json({
-      token, shoppingCart: customer.cart.shoppingCart, cartId: customer.cart.cartId,
+      token, shoppingCart: customer.shoppingCart, cartId: customer.cartId,
     });
   } catch (error) {
     throw error;

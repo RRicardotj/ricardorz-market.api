@@ -146,7 +146,7 @@ model.searchByName = (name, page) => {
     });
 };
 
-model.getAttributesAvealible = (productId, attributeType) => sequelize
+model.getAttributesAvailable = (productId, attributeType) => sequelize
   .query(
     `SELECT prod.product_id productId, attV.value, attV.attribute_value_id attributeValueId
     FROM product prod
