@@ -17,5 +17,6 @@
   "EMAIL_TAKEN": "This email was taken for other user",
   "PASSWORD_NOT_IDENTICAL": "The password and the password confirmation are diferents",
   "SHIPPING_RG_NO_FOUND": "The shipping region was not found",
-  "CUSTOMER_CREATED": "Customer created sucessfully, check your email for active your account"
+  "CUSTOMER_CREATED": "Customer created sucessfully, check your email for active your account",
+  "CART_NOT_FOUND": "The shopping cart was not found"
 }

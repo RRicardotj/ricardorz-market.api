@@ -7,6 +7,8 @@ const jwtVerify = promisify(jwt.verify);
 
 const jwtAuth = async (req, res, next) => {
   let token = req.headers.authorization || req.query.token;
+  req.customerLanguage = req.query.language;
+
   if (req.path.substring(0, 6) !== '/admin' && req.path.substring(0, 5) !== '/user') {
     if (token) {
       token = token.split(' ');
@@ -27,8 +29,6 @@ const jwtAuth = async (req, res, next) => {
         req.customerId = decoded.customerId;
         req.customerLanguage = customer.language;
       }
-
-      return next();
     }
 
     return next();
