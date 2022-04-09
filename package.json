@@ -21,7 +21,7 @@
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.0",
     "mailgun-js": "^0.22.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "mysql2": "^1.6.5",
     "nodemon": "^1.18.10",
     "pug": "^2.0.3",
